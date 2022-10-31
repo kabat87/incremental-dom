@@ -1,18 +1,5 @@
-/**
- * Copyright 2018 The Incremental DOM Authors. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS-IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+//  Copyright 2018 The Incremental DOM Authors. All Rights Reserved.
+/** @license SPDX-License-Identifier: Apache-2.0 */
 
 import { getData, initData } from "./node_data";
 import { Key, NameOrCtorDef } from "./types";
@@ -21,7 +8,7 @@ import { Key, NameOrCtorDef } from "./types";
  * Gets the namespace to create an element (of a given tag) in.
  * @param tag The tag to get the namespace for.
  * @param parent The current parent Node, if any.
- * @returns The namespace to use,
+ * @returns The namespace to use.
  */
 function getNamespaceForTag(tag: string, parent: Node | null) {
   if (tag === "svg") {
@@ -40,7 +27,12 @@ function getNamespaceForTag(tag: string, parent: Node | null) {
     return null;
   }
 
-  return parent.namespaceURI;
+  // Since TypeScript 4.4 namespaceURI is only defined for Attr and Element
+  // nodes. Checking for Element nodes here seems reasonable but breaks SVG
+  // rendering in Chrome in certain cases. The cast to any should be removed
+  // once we know why this happens.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (parent as any).namespaceURI;
 }
 
 /**
